@@ -21,6 +21,7 @@ import {
 } from "../utils/searchUtils";
 import { TransactionModal } from "../components/TransactionModal";
 import { TokenOverviewHeader } from "../components/TokenOverviewHeader";
+import { SystemStatus } from "../components/SystemStatus";
 import { SOCIAL_LINKS } from "../constants/index";
 import type { Transfer } from "../types/api";
 
@@ -414,6 +415,9 @@ export const MainLayout: React.FC = () => {
           onClose={() => setSearchResult(null)}
         />
       )}
+
+      {/* System Status Indicator */}
+      <SystemStatus />
     </div>
   );
 };
