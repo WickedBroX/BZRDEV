@@ -4,6 +4,7 @@ import { TransfersPage } from './pages/TransfersPage';
 import { HoldersPage } from './pages/HoldersPage';
 import { InfoPage } from './pages/InfoPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
+import { AdminPage } from './pages/AdminPage';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="holders" element={<HoldersPage />} />
         <Route path="info" element={<InfoPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
+        <Route path="admin" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

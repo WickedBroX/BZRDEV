@@ -21,7 +21,8 @@ import {
 } from "../utils/searchUtils";
 import { TransactionModal } from "../components/TransactionModal";
 import { TokenOverviewHeader } from "../components/TokenOverviewHeader";
-import { SOCIAL_LINKS } from "../constants/index";
+import { SystemStatus } from "../components/SystemStatus";
+import { useSettings } from "../contexts/SettingsContext";
 import type { Transfer } from "../types/api";
 
 const navItems = [
@@ -43,6 +44,7 @@ const DiscordIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 export const MainLayout: React.FC = () => {
+  const { general, socials } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -125,7 +127,7 @@ export const MainLayout: React.FC = () => {
                 className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
               >
                 <img
-                  src="https://res.cloudinary.com/dhznjbcys/image/upload/v1762175462/BZR-SCAN-V2_iybuqz.png"
+                  src={general.logoUrl}
                   alt="Bazaars Scan Logo"
                   className="h-8 w-auto sm:h-10"
                 />
@@ -257,7 +259,7 @@ export const MainLayout: React.FC = () => {
             {/* Logo and Description */}
             <div className="lg:col-span-1">
               <img
-                src="https://res.cloudinary.com/dhznjbcys/image/upload/v1762175462/BZR-SCAN-V2_iybuqz.png"
+                src={general.logoUrl}
                 alt="Bazaars Logo"
                 className="h-8 w-auto mb-4"
               />
@@ -363,7 +365,7 @@ export const MainLayout: React.FC = () => {
                 Community
               </h3>
               <ul className="space-y-3">
-                {SOCIAL_LINKS.map((link) => {
+                {socials.map((link) => {
                   const IconMap = {
                     Website: Globe,
                     Twitter: Twitter,
@@ -414,6 +416,9 @@ export const MainLayout: React.FC = () => {
           onClose={() => setSearchResult(null)}
         />
       )}
+
+      {/* System Status Indicator */}
+      <SystemStatus />
     </div>
   );
 };
