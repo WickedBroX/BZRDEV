@@ -18,6 +18,7 @@ const statsRoutes = require('./src/routes/stats.routes');
 const analyticsRoutes = require('./src/routes/analytics.routes');
 const holdersRoutes = require('./src/routes/holders.routes');
 const healthRoutes = require('./src/routes/health.routes');
+const adminRoutes = require('./src/routes/admin.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -66,6 +67,24 @@ app.use('/api', statsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/holders', holdersRoutes);
 app.use('/api', healthRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Public settings endpoint (readonly subset) for frontend initialization
+// We can reuse the controller but strictly filter what is returned if we want to separate admin/public
+// For now, let's expose a public endpoint for the frontend to get 'general' and 'socials' settings without auth
+app.get('/api/settings/public', async (req, res) => {
+    const { getSettings } = require('./src/services/settingsService');
+    try {
+        const all = await getSettings();
+        // Only return safe public config
+        res.json({
+            general: all.general || {},
+            socials: all.socials || []
+        });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to load settings' });
+    }
+});
 
 // --- Configuration & Startup Helpers ---
 const API_KEYS_RAW = process.env.ETHERSCAN_V2_API_KEY || '';
