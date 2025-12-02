@@ -11,8 +11,13 @@ export interface GeneralSettings {
   maxSupply?: number;
 }
 
+export interface ContentSettings {
+  footerText?: string;
+}
+
 export interface SettingsContextType {
   general: GeneralSettings;
+  content: ContentSettings;
   socials: SocialLink[];
   loading: boolean;
   refreshSettings: () => Promise<void>;

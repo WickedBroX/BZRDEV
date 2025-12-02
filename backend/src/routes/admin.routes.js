@@ -10,5 +10,6 @@ router.post('/login', adminController.adminLogin);
 // Protected settings routes
 router.get('/settings', requireAdmin, adminController.getSettings);
 router.post('/settings', requireAdmin, adminController.updateSettings);
+router.get('/backup', requireAdmin, adminController.downloadBackup);
 
 module.exports = router;

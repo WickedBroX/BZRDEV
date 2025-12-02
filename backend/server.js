@@ -79,6 +79,7 @@ app.get('/api/settings/public', async (req, res) => {
         // Only return safe public config
         res.json({
             general: all.general || {},
+            content: all.content || {},
             socials: all.socials || []
         });
     } catch (e) {

@@ -6,15 +6,16 @@ import { Loader2, Save, Trash2, Plus, RefreshCw } from 'lucide-react';
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
 export const AdminPage: React.FC = () => {
-  const { general, socials, refreshSettings } = useSettings();
+  const { general, content, socials, refreshSettings } = useSettings();
   const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
   const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState<'general' | 'socials' | 'apikeys'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'content' | 'socials' | 'apikeys'>('general');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Form states
   const [editGeneral, setEditGeneral] = useState(general);
+  const [editContent, setEditContent] = useState(content);
   const [editSocials, setEditSocials] = useState(socials);
   const [apiKeyEtherscan, setApiKeyEtherscan] = useState('');
   const [apiKeyCronos, setApiKeyCronos] = useState('');
@@ -22,8 +23,9 @@ export const AdminPage: React.FC = () => {
   // Initial load of form state from context
   React.useEffect(() => {
     setEditGeneral(general);
+    setEditContent(content);
     setEditSocials(socials);
-  }, [general, socials]);
+  }, [general, content, socials]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +55,38 @@ export const AdminPage: React.FC = () => {
       refreshSettings();
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to save general settings' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveContent = async () => {
+    setIsLoading(true);
+    try {
+      await authenticatedAxios.post('/api/admin/settings', { key: 'content', value: editContent });
+      setMessage({ type: 'success', text: 'Content settings saved!' });
+      refreshSettings();
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to save content settings' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const downloadBackup = async () => {
+    setIsLoading(true);
+    try {
+      const response = await authenticatedAxios.get('/api/admin/backup', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `bzr_backup_${Date.now()}.sql`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setMessage({ type: 'success', text: 'Backup downloaded successfully!' });
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to download backup' });
     } finally {
       setIsLoading(false);
     }
@@ -145,6 +179,12 @@ export const AdminPage: React.FC = () => {
             General
           </button>
           <button
+            className={`px-6 py-4 text-sm font-medium ${activeTab === 'content' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            onClick={() => setActiveTab('content')}
+          >
+            Content
+          </button>
+          <button
             className={`px-6 py-4 text-sm font-medium ${activeTab === 'socials' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
             onClick={() => setActiveTab('socials')}
           >
@@ -189,13 +229,45 @@ export const AdminPage: React.FC = () => {
                   onChange={(e) => setEditGeneral({ ...editGeneral, maxSupply: Number(e.target.value) })}
                 />
               </div>
+              <div className="flex gap-4">
+                <button
+                  onClick={saveGeneral}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {isLoading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+                  Save Changes
+                </button>
+                <button
+                  onClick={downloadBackup}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 disabled:opacity-50"
+                >
+                  {isLoading ? <Loader2 className="animate-spin" size={18} /> : <RefreshCw size={18} />}
+                  Download DB Backup
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* CONTENT TAB */}
+          {activeTab === 'content' && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Footer Text</label>
+                <textarea
+                  className="w-full rounded-lg border border-gray-300 p-2.5 h-32"
+                  value={editContent.footerText || ''}
+                  onChange={(e) => setEditContent({ ...editContent, footerText: e.target.value })}
+                />
+              </div>
               <button
-                onClick={saveGeneral}
+                onClick={saveContent}
                 disabled={isLoading}
                 className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-                Save Changes
+                Save Content
               </button>
             </div>
           )}

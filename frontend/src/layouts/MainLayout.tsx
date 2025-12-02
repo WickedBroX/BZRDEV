@@ -44,7 +44,7 @@ const DiscordIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 export const MainLayout: React.FC = () => {
-  const { general, socials } = useSettings();
+  const { general, content, socials } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -264,8 +264,7 @@ export const MainLayout: React.FC = () => {
                 className="h-8 w-auto mb-4"
               />
               <p className="text-sm text-gray-600 leading-relaxed">
-                Explore and track BZR token transactions across multiple
-                blockchain networks.
+                {content.footerText || "Explore and track BZR token transactions across multiple blockchain networks."}
               </p>
             </div>
 
