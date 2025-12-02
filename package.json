@@ -1,0 +1,17 @@
+{
+  "name": "bzr-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "./scripts/dev.sh",
+    "deploy:backend": "./scripts/deploy-backend.sh",
+    "deploy:frontend": "./scripts/deploy-frontend.sh"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
