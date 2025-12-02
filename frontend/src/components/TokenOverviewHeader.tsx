@@ -16,8 +16,8 @@ import { useTokenInfo } from "../hooks/api/useTokenInfo";
 import { useTokenStats } from "../hooks/api/useTokenStats";
 import { useTokenPrice } from "../hooks/api/useTokenPrice";
 import { useTransfers } from "../hooks/api/useTransfers";
+import { useSettings } from "../contexts/SettingsContext";
 import { formatUsdValue } from "../utils/formatters";
-import { BZR_TOKEN_ADDRESS, SOCIAL_LINKS } from "../constants/index";
 
 // Utility function for consistent supply formatting
 const formatSupply = (value: number): string => {
@@ -48,6 +48,7 @@ const SOCIAL_ICONS = {
 } as const;
 
 export const TokenOverviewHeader: React.FC = () => {
+  const { general, socials } = useSettings();
   const {
     data: info,
     isLoading: loadingInfo,
@@ -78,7 +79,7 @@ export const TokenOverviewHeader: React.FC = () => {
   }, []);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(BZR_TOKEN_ADDRESS);
+    navigator.clipboard.writeText(general.tokenAddress || "");
     setCopied(true);
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -185,7 +186,7 @@ export const TokenOverviewHeader: React.FC = () => {
                   Max Supply:
                 </span>
                 <span className="font-medium text-gray-900">
-                  555,555,555 BZR
+                  {general.maxSupply?.toLocaleString("en-US") || "555,555,555"} BZR
                 </span>
               </div>
 
@@ -225,12 +226,12 @@ export const TokenOverviewHeader: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 group min-w-0">
                 <a
-                  href={`https://etherscan.io/address/${BZR_TOKEN_ADDRESS}`}
+                  href={`https://etherscan.io/address/${general.tokenAddress}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-sm text-blue-600 font-mono truncate hover:text-blue-800 transition-colors flex-1 min-w-0"
                 >
-                  {BZR_TOKEN_ADDRESS}
+                  {general.tokenAddress}
                 </a>
                 <button
                   onClick={handleCopy}
@@ -252,7 +253,7 @@ export const TokenOverviewHeader: React.FC = () => {
                 Official Site
               </div>
               <a
-                href={SOCIAL_LINKS[0].url}
+                href={socials.find(s => s.name === "Website")?.url || "#"}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-1 text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors"
@@ -267,7 +268,7 @@ export const TokenOverviewHeader: React.FC = () => {
                 Social Profiles
               </div>
               <div className="flex gap-2">
-                {SOCIAL_LINKS.filter((link) =>
+                {socials.filter((link) =>
                   [
                     "Website",
                     "Twitter",
