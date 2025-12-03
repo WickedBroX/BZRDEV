@@ -51,6 +51,13 @@ ETHERSCAN_V2_API_KEY=your_etherscan_key
 CRONOS_API_KEY=your_cronos_key
 ```
 
+### Generating Secrets
+To generate a secure `JWT_SECRET` or `ADMIN_PASSWORD`, you can run this command on your terminal:
+```bash
+openssl rand -base64 32
+```
+Copy the output and paste it into your `.env` file.
+
 ---
 
 ## 3. Deployment
